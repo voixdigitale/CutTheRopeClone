@@ -65,5 +65,30 @@ public class Rope : MonoBehaviour
             _rope1Points.RemoveRange(index, _rope1Points.Count - index);
         }
         transform.GetComponent<HingeJoint2D>().enabled = false;
+
+        StartCoroutine(FadeRope());
+    }
+
+    IEnumerator FadeRope() {
+        Gradient currentGradient = _lineRenderer2.colorGradient;
+
+        GradientAlphaKey[] currentAlpha = currentGradient.alphaKeys;
+
+        for (int i = 0; i < currentAlpha.Length; i++) {
+            currentAlpha[i].alpha -= .1f;
+        }
+
+        currentGradient.alphaKeys = currentAlpha;
+
+        _lineRenderer2.colorGradient = currentGradient;
+
+        yield return new WaitForSeconds(.1f);
+        
+        if (currentAlpha[0].alpha > 0) {
+            StartCoroutine(FadeRope());
+        }
+        else {
+            _lineRenderer2.positionCount = 0;
+        }
     }
 }
