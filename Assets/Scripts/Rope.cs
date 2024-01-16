@@ -11,6 +11,7 @@ public class Rope : MonoBehaviour
     [SerializeField] LineRenderer _lineRenderer2;
     [SerializeField] HingeJoint2D _hook;
     [SerializeField] int _ropeLength;
+    [SerializeField] float _lengthMultiplier;
     [SerializeField] GameObject _linkPrefab;
     [SerializeField] Candy _candy;
 
@@ -26,7 +27,8 @@ public class Rope : MonoBehaviour
         Rigidbody2D previousRB = _hook.GetComponent<Rigidbody2D>();
         _rope1Points.Add(_hook.transform);
 
-        Vector2 distanceToWeight = _candy.transform.position - _hook.transform.position;
+        Vector2 distanceToWeight = _lengthMultiplier * (_candy.transform.position - _hook.transform.position);
+
         Vector2 increment = distanceToWeight / _ropeLength;
 
         for (int i = 0; i < _ropeLength - 1; i++) {
@@ -67,6 +69,7 @@ public class Rope : MonoBehaviour
         transform.GetComponent<HingeJoint2D>().enabled = false;
 
         StartCoroutine(FadeRope());
+        _candy.DetachRope(this);
     }
 
     IEnumerator FadeRope() {
@@ -75,7 +78,7 @@ public class Rope : MonoBehaviour
         GradientAlphaKey[] currentAlpha = currentGradient.alphaKeys;
 
         for (int i = 0; i < currentAlpha.Length; i++) {
-            currentAlpha[i].alpha -= .1f;
+            currentAlpha[i].alpha -= .2f;
         }
 
         currentGradient.alphaKeys = currentAlpha;
